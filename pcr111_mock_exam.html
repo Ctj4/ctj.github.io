@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PCR111 Mock Exam - 100 Questions</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; background: #f9f9f9; }
+  h1, h2 { text-align: center; }
+  .question { background: #fff; padding: 15px; margin-bottom: 12px; border-radius: 6px; box-shadow: 0 0 6px #ccc; }
+  .answers label { display: block; margin: 6px 0; cursor: pointer; }
+  button { padding: 12px 30px; font-size: 16px; margin: 20px auto; display: block; border-radius: 6px; background: #007BFF; color: white; border: none; cursor: pointer; }
+  button:disabled { background: #ccc; cursor: not-allowed; }
+  #result { margin-top: 25px; font-weight: bold; font-size: 18px; white-space: pre-wrap; }
+  nav { text-align: center; margin: 20px; }
+</style>
+</head>
+<body>
+
+<h1>PCR111 Mock Exam</h1>
+<h2>100 Questions - 5 Pages (20 Questions per Page)</h2>
+
+<form id="quizForm">
+  <div id="pageContainer"></div>
+</form>
+
+<nav>
+  <button id="prevBtn" onclick="prevPage()" disabled>Previous</button>
+  <button id="nextBtn" onclick="nextPage()">Next</button>
+  <button id="submitBtn" onclick="submitExam()" style="display:none;">Submit All</button>
+</nav>
+
+<div id="result"></div>
+
+<script>
+const examData = [
+  {q:"1. What is the primary purpose of peace education?", choices: ["To promote war","To encourage violence","To foster peaceful coexistence","To increase conflict"], answer:"C"},
+  {q:"2. Which type of conflict occurs within an individual?", choices: ["Interpersonal","Intrapersonal","International","Intergroup"], answer:"B"},
+  {q:"3. What is the meaning of ‘track-two diplomacy’?", choices: ["Governmental talks","Military action","Non-governmental peace efforts","Economic sanctions"], answer:"C"},
+  {q:"4. Which method is NOT a non-violent conflict resolution strategy?", choices: ["Negotiation","Mediation","Violence","Arbitration"], answer:"C"},
+  {q:"5. Who is known as the father of modern peace education?", choices: ["Martin Luther King Jr.","J.A. Comenius","Mahatma Gandhi","Nelson Mandela"], answer:"B"},
+  {q:"6. Which organization is primarily responsible for maintaining international peace?", choices: ["United Nations","World Bank","IMF","WTO"], answer:"A"},
+  {q:"7. Which of the following is a cause of conflict?", choices: ["Trust","Miscommunication","Friendship","Cooperation"], answer:"B"},
+  {q:"8. What is Alternative Dispute Resolution (ADR)?", choices: ["Using violence to resolve disputes","Ignoring conflicts","Methods like mediation and arbitration","Legal prosecution only"], answer:"C"},
+  {q:"9. Peace education aims to transform:", choices: ["Attitudes, behaviors, and structures","Weapons and armies","Economic policies","Legal systems only"], answer:"A"},
+  {q:"10. Which century did J.A. Comenius live in?", choices: ["16th","17th","18th","19th"], answer:"B"},
+  {q:"11. What does ‘peacekeeping’ generally involve?", choices: ["Military deployment to maintain peace","Starting conflicts","Economic warfare","Ignoring disputes"], answer:"A"},
+  {q:"12. Which of the following is NOT part of peace education?", choices: ["Promoting tolerance","Teaching violence","Human rights awareness","Conflict resolution skills"], answer:"B"},
+  {q:"13. What is ‘human rights’?", choices: ["Privileges given by governments","Universal rights inherent to all humans","Rights for specific groups only","Economic rights only"], answer:"B"},
+  {q:"14. Which conflict management style emphasizes collaboration?", choices: ["Avoidance","Competition","Accommodation","Cooperation"], answer:"D"},
+  {q:"15. Which is NOT a type of conflict?", choices: ["Intrapersonal","Interpersonal","Interplanetary","International"], answer:"C"},
+  {q:"16. What is the main cause of intergroup conflicts?", choices: ["Common goals","Competition for resources","Shared culture","Peace agreements"], answer:"B"},
+  {q:"17. Which of these is a peaceful way to manage conflicts?", choices: ["Retaliation","Negotiation","Violence","Sabotage"], answer:"B"},
+  {q:"18. Which of the following best defines peace?", choices: ["Absence of conflict","Balance of power","Absence of war and presence of justice","Unchanging status quo"], answer:"C"},
+  {q:"19. ‘Peacebuilding’ focuses on:", choices: ["Creating long-term sustainable peace","Building weapons","Enforcing strict laws","Ignoring past conflicts"], answer:"A"},
+  {q:"20. Which term means a formal third-party decision in conflict?", choices: ["Negotiation","Mediation","Arbitration","Retaliation"], answer:"C"},
+  {q:"21. What is the goal of ‘mediation’ in conflict resolution?", choices: ["Impose a decision","Help parties reach agreement","Punish offenders","Ignore the conflict"], answer:"B"},
+  {q:"22. What does ‘intrapersonal conflict’ involve?", choices: ["Disagreement between friends","Internal struggle within a person","Dispute between countries","Competition for resources"], answer:"B"},
+  {q:"23. What role does education play in peace?", choices: ["Promotes hatred","Encourages violence","Spreads knowledge for peace","Creates division"], answer:"C"},
+  {q:"24. Which is a sign of conflict escalation?", choices: ["Dialogue increase","Violence outbreak","Tension decrease","Peace treaty"], answer:"B"},
+  {q:"25. Who introduced the concept of peace education in Europe?", choices: ["J.A. Comenius","Plato","Aristotle","Socrates"], answer:"A"},
+  {q:"26. Which of these is NOT an internal conflict resolution mechanism?", choices: ["Negotiation","Mediation","Retaliation","Dialogue"], answer:"C"},
+  {q:"27. What is ‘track-one diplomacy’?", choices: ["Non-governmental efforts","Military action","Official government talks","Economic sanctions"], answer:"C"},
+  {q:"28. Which of the following best describes ‘social justice’?", choices: ["Unequal treatment","Fair and equal rights","Favoritism","Discrimination"], answer:"B"},
+  {q:"29. Which method uses a neutral third party to suggest a solution?", choices: ["Negotiation","Mediation","Arbitration","Retaliation"], answer:"B"},
+  {q:"30. Which of these is NOT a human right?", choices: ["Right to education","Right to vote","Right to harm others","Right to freedom"], answer:"C"},
+  {q:"31. What is the best way to handle a conflict at work?", choices: ["Avoid it","Use violence","Open communication","Spread rumors"], answer:"C"},
+  {q:"32. The ‘United Nations’ was founded in which year?", choices: ["1945","1918","1960","2000"], answer:"A"},
+  {q:"33. Which is an example of structural violence?", choices: ["War","Poverty caused by inequality","Personal fight","Natural disaster"], answer:"B"},
+  {q:"34. What is a ‘peace treaty’?", choices: ["An agreement to end conflict","A declaration of war","A type of weapon","A peacekeeping force"], answer:"A"},
+  {q:"35. What is ‘justice’?", choices: ["Fairness in treatment and laws","Favoring certain groups","Punishment only","Ignoring crimes"], answer:"A"},
+  {q:"36. What does the ‘right to life’ protect?", choices: ["Right to own property","Right not to be killed unjustly","Right to speak freely","Right to vote"], answer:"B"},
+  {q:"37. What is ‘conflict resolution’?", choices: ["Ending conflict peacefully","Starting wars","Ignoring problems","Fighting"], answer:"A"},
+  {q:"38. Which of these is NOT a peacebuilding activity?", choices: ["Dialogue","Reconciliation","Violence","Mediation"], answer:"C"},
+  {q:"39. Which philosopher emphasized reason over experiments?", choices: ["Plato","Aristotle","Socrates","Descartes"], answer:"A"},
+  {q:"40. Which of these can be a consequence of unresolved conflict?", choices: ["Peace","Economic growth","Violence","Friendship"], answer:"C"},
+  {q:"41. Which method involves a third party imposing a solution?", choices: ["Negotiation","Mediation","Arbitration","Dialogue"], answer:"C"},
+  {q:"42. Which is an example of interpersonal conflict?", choices: ["Fight between coworkers","Civil war","Personal dilemma","National dispute"], answer:"A"},
+  {q:"43. What is the role of ‘education for peace’?", choices: ["To promote violence","To teach skills for peaceful coexistence","To increase conflicts","To ignore history"], answer:"B"},
+  {q:"44. Who is a key figure in non-violent resistance?", choices: ["Mahatma Gandhi","Napoleon","Julius Caesar","Adolf Hitler"], answer:"A"},
+  {q:"45. What does ‘human dignity’ mean?", choices: ["Respect for human worth","Physical strength","Economic power","Political status"], answer:"A"},
+  {q:"46. Which is NOT a peaceful way to manage conflict?", choices: ["Negotiation","Retaliation","Dialogue","Compromise"], answer:"B"},
+  {q:"47. What is the purpose of ‘peacekeeping forces’?", choices: ["Maintain peace and security","Start conflicts","Enforce economic sanctions","Ignore disputes"], answer:"A"},
+  {q:"48. What does ‘conflict transformation’ involve?", choices: ["Changing relationships and structures","Ignoring conflicts","Escalating violence","Punishing offenders"], answer:"A"},
+  {q:"49. Which of these is an external conflict?", choices: ["Disagreement with a friend","War between countries","Internal struggle","Personal dilemma"], answer:"B"},
+  {q:"50. Which is a key element of peace education?", choices: ["Tolerance","Violence","Hatred","Discrimination"], answer:"A"},
+  {q:"51. What does ‘non-violence’ mean?", choices: ["Avoiding physical force","Using weapons","Fighting back","Ignoring problems"], answer:"A"},
+  {q:"52. Which of these promotes peace in society?", choices: ["Discrimination","Social justice","Inequality","Violence"], answer:"B"},
+  {q:"53. What is ‘reconciliation’?", choices: ["Restoring friendly relations","Starting fights","Ignoring problems","Punishing enemies"], answer:"A"},
+  {q:"54. Which is NOT a cause of conflict?", choices: ["Competition","Misunderstanding","Trust","Resource scarcity"], answer:"C"},
+  {q:"55. What is the role of ‘peace education’ in schools?", choices: ["Teach conflict resolution","Encourage fighting","Promote hate speech","Ignore social issues"], answer:"A"},
+  {q:"56. What does ‘human security’ focus on?", choices: ["Protecting people’s rights and safety","Building weapons","Economic sanctions","Ignoring human needs"], answer:"A"},
+  {q:"57. Which term means unfair treatment based on group identity?", choices: ["Justice","Discrimination","Equality","Tolerance"], answer:"B"},
+  {q:"58. What is a ‘ceasefire’?", choices: ["Agreement to stop fighting","Start of war","Declaration of peace treaty","Military attack"], answer:"A"},
+  {q:"59. What is the focus of ‘conflict prevention’?", choices: ["Stop conflicts before they start","Win wars","Ignore tensions","Punish aggressors"], answer:"A"},
+  {q:"60. What is ‘dialogue’?", choices: ["Open communication","Violence","Ignoring problems",""], answer:"A"},
+  {q:"61. What is a ‘peace accord’?", choices: ["An agreement to end conflict","Declaration of war","New weapon","Military order"], answer:"A"},
+  {q:"62. What does ‘tolerance’ mean?", choices: ["Respecting differences","Hate","Violence","Discrimination"], answer:"A"},
+  {q:"63. What is ‘conflict management’?", choices: ["Handling conflict constructively","Starting fights","Ignoring issues","Winning at all cost"], answer:"A"},
+  {q:"64. Which is an example of interpersonal conflict?", choices: ["Disagreement between friends","War between nations","Internal struggle","Political debate"], answer:"A"},
+  {q:"65. What is the main goal of peace education?", choices: ["Reduce violence","Increase conflict","Promote weapons","Spread hate"], answer:"A"},
+  {q:"66. What does ‘mediation’ involve?", choices: ["Third party helps resolve conflict","Ignoring problem","Violence","Punishment"], answer:"A"},
+  {q:"67. What is ‘conflict transformation’?", choices: ["Changing relationships for peace","Ignoring conflict","Fighting","Winning"], answer:"A"},
+  {q:"68. Which of these is a human right?", choices: ["Right to life","Right to harm others","Right to steal","Right to fight"], answer:"A"},
+  {q:"69. Which philosopher taught the 'love of wisdom'?", choices: ["Plato","Aristotle","Socrates","Descartes"], answer:"A"},
+  {q:"70. What is the focus of peace education?", choices: ["Promote justice and equality","Encourage violence","Spread hatred","Ignore conflicts"], answer:"A"},
+  {q:"71. What is the meaning of ‘justice’?", choices: ["Fairness","Favoritism","Revenge","Corruption"], answer:"A"},
+  {q:"72. Which of these is NOT a type of peace education?", choices: ["Violence education","Conflict resolution","Human rights education","Social justice education"], answer:"A"},
+  {q:"73. What does ‘advocacy’ mean?", choices: ["Supporting a cause","Ignoring problems","Fighting","Starting conflict"], answer:"A"},
+  {q:"74. What is the purpose of ‘peacebuilding’?", choices: ["Create lasting peace","Start war","Ignore problems","Spread hate"], answer:"A"},
+  {q:"75. Which is NOT an example of structural violence?", choices: ["Poverty","War","Personal attack","Discrimination"], answer:"C"},
+  {q:"76. What is ‘nonviolent resistance’?", choices: ["Peaceful protest","Armed rebellion","Violence","Ignoring issues"], answer:"A"},
+  {q:"77. Which is NOT a goal of peace education?", choices: ["Promote hatred","Foster tolerance","Teach conflict resolution","Encourage empathy"], answer:"A"},
+  {q:"78. What is ‘early warning’ in conflict prevention?", choices: ["Detecting signs of conflict before it escalates","Starting conflicts","Ignoring tensions","Promoting violence"], answer:"A"},
+  {q:"79. What is a ‘ceasefire agreement’?", choices: ["Temporary stop to fighting","Start of war","Permanent peace treaty","Economic deal"], answer:"A"},
+  {q:"80. What is the role of ‘education in human rights’?", choices: ["Raise awareness and promote respect","Promote violence","Ignore laws","Discriminate"], answer:"A"},
+  {q:"81. Which is a form of structural violence?", choices: ["Systemic poverty","Physical fighting","War","Natural disaster"], answer:"A"},
+  {q:"82. What is the meaning of ‘tolerance’?", choices: ["Respect for differences","Hatred","Violence","Discrimination"], answer:"A"},
+  {q:"83. Which is a characteristic of a peace educator?", choices: ["Impartial","Biased","Violent","Uninformed"], answer:"A"},
+  {q:"84. What is ‘conflict transformation’?", choices: ["Changing relationships and systems","Ignoring conflict","Fighting","Punishment"], answer:"A"},
+  {q:"85. Which approach emphasizes negotiation and dialogue?", choices: ["Peaceful resolution","War","Violence","Retaliation"], answer:"A"},
+  {q:"86. What is ‘reconciliation’?", choices: ["Restoring relationships","Starting fights","Ignoring problems","Punishing enemies"], answer:"A"},
+  {q:"87. What is a ‘peace treaty’?", choices: ["Agreement to end conflict","Declaration of war","Weapon","Military order"], answer:"A"},
+  {q:"88. What does ‘human dignity’ mean?", choices: ["Respect for human worth","Physical strength","Economic power","Political status"], answer:"A"},
+  {q:"89. Which of these is a peace education tool?", choices: ["Dialogue","Violence","Weapons","Retaliation"], answer:"A"},
+  {q:"90. Which organization promotes peace worldwide?", choices: ["United Nations","WTO","IMF","World Bank"], answer:"A"},
+  {q:"91. What is ‘conflict resolution’?", choices: ["Ending conflicts peacefully","Starting fights","Ignoring issues","Violence"], answer:"A"},
+  {q:"92. Which is a peacebuilding activity?", choices: ["Mediation","Violence","Sabotage","Retaliation"], answer:"A"},
+  {q:"93. What is the meaning of ‘peace’?", choices: ["Absence of violence","War","Fighting","Conflict"], answer:"A"},
+  {q:"94. What does ‘nonviolent resistance’ involve?", choices: ["Peaceful protest","Armed rebellion","Violence","Ignoring problems"], answer:"A"},
+  {q:"95. Which of the following is an example of ‘peace education’?", choices: ["Teaching tolerance","Promoting hatred","Starting conflicts","Ignoring differences"], answer:"A"},
+  {q:"96. What is ‘conflict transformation’?", choices: ["Changing the underlying causes","Ignoring conflicts","Fighting","Winning"], answer:"A"},
+  {q:"97. What is the goal of ‘peacebuilding’?", choices: ["Create sustainable peace","Start wars","Ignore problems","Spread hate"], answer:"A"},
+  {q:"98. Which of the following is NOT a conflict resolution method?", choices: ["Violence","Negotiation","Mediation","Arbitration"], answer:"A"},
+  {q:"99. What is ‘advocacy’ in peace education?", choices: ["Promoting a cause","Starting fights","Violence","Ignoring problems"], answer:"A"},
+  {q:"100. Which is NOT a peaceful conflict resolution technique?", choices: ["Violence","Negotiation","Mediation","Dialogue"], answer:"A"}
+];
+
+const questionsPerPage = 20;
+let currentPage = 1;
+
+function renderPage(page) {
+  const container = document.getElementById('pageContainer');
+  container.innerHTML = '';
+  const start = (page - 1) * questionsPerPage;
+  const end = Math.min(start + questionsPerPage, examData.length);
+
+  for (let i = start; i < end; i++) {
+    const qObj = examData[i];
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.id = `q${i}`;
+
+    let html = `<p><strong>${qObj.q}</strong></p><div class="answers">`;
+    ['A','B','C','D'].forEach((letter, idx) => {
+      const checked = getAnswer(i) === letter ? 'checked' : '';
+      html += `
+        <label>
+          <input type="radio" name="q${i}" value="${letter}" ${checked} />
+          ${letter}. ${qObj.choices[idx]}
+        </label>
+      `;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  }
+
+  // Update buttons
+  document.getElementById('prevBtn').disabled = page === 1;
+  document.getElementById('nextBtn').style.display = (page * questionsPerPage >= examData.length) ? 'none' : 'inline-block';
+  document.getElementById('submitBtn').style.display = (page * questionsPerPage >= examData.length) ? 'inline-block' : 'none';
+
+  // Save answers on page change
+  addAnswerListeners();
+  document.getElementById('result').innerHTML = '';
+}
+
+function addAnswerListeners() {
+  const form = document.getElementById('quizForm');
+  form.querySelectorAll('input[type=radio]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const qIndex = parseInt(radio.name.replace('q',''));
+      answers[qIndex] = radio.value;
+    });
+  });
+}
+
+let answers = Array(examData.length).fill(null);
+
+function getAnswer(index) {
+  return answers[index];
+}
+
+function prevPage() {
+  if(currentPage > 1) {
+    currentPage--;
+    renderPage(currentPage);
+  }
+}
+
+function nextPage() {
+  if(currentPage * questionsPerPage < examData.length) {
+    currentPage++;
+    renderPage(currentPage);
+  }
+}
+
+function submitExam() {
+  let score = 0;
+  let unanswered = 0;
+  let feedback = '';
+
+  for(let i=0; i < examData.length; i++) {
+    if(answers[i] == null) {
+      unanswered++;
+      feedback += `Question ${i+1}: Unanswered\n`;
+    } else if(answers[i] === examData[i].answer) {
+      score++;
+    } else {
+      feedback += `Question ${i+1}: Wrong (Your answer: ${answers[i]}, Correct: ${examData[i].answer})\n`;
+    }
+  }
+
+  const percent = ((score / examData.length) * 100).toFixed(2);
+  let resultText = `Your Score: ${score} out of ${examData.length} (${percent}%)\n`;
+  if(unanswered > 0) {
+    resultText += `You left ${unanswered} question(s) unanswered.\n`;
+  }
+  resultText += '\nDetails:\n' + feedback;
+
+  document.getElementById('result').textContent = resultText;
+  // Scroll to result
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+// Initial render
+renderPage(currentPage);
+</script>
+
+</body>
+</html>
